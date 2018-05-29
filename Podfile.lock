@@ -1,18 +1,23 @@
 PODS:
   - Alamofire (4.6.0)
   - RevealingSplashView (0.4.0)
+  - SDWebImage (4.3.1):
+    - SDWebImage/Core (= 4.3.1)
+  - SDWebImage/Core (4.3.1)
   - SwiftyJSON (4.0.0)
 
 DEPENDENCIES:
   - Alamofire
   - RevealingSplashView
+  - SDWebImage
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   RevealingSplashView: 72be158ad5e1bc72713e8f78383dc3e1803ce4d1
+  SDWebImage: 09808bac78357b39f8db4ea360c7b5534d785ef4
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: 238d310955d28369bf3dd666143d4488466ece1a
+PODFILE CHECKSUM: c1c3053cdb8fc8329f879a28c685f43098db8c32
 
 COCOAPODS: 1.4.0

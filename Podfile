@@ -8,5 +8,6 @@ target 'BitcoinTicker' do
   pod 'RevealingSplashView'
   pod 'SwiftyJSON'
   pod 'Alamofire'
+  pod 'SDWebImage'
 
 end
