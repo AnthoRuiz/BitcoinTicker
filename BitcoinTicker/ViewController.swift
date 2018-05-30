@@ -8,16 +8,28 @@
 
 import UIKit
 import RevealingSplashView
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
    
-   func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-      return currencyArray.count
-   }
+    let baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC"
+    let currencyArray = ["AUD", "BRL","CAD","CNY","EUR","GBP","HKD","IDR","ILS","INR","JPY","MXN","NOK","NZD","PLN","RON","RUB","SEK","SGD","USD","ZAR"]
+   let currencySimbol = ["$", "R$", "$", "¥", "€", "£", "$", "Rp", "₪", "₹", "¥", "$", "kr", "$", "zł", "lei", "₽", "kr", "$", "$", "R"]
+    var finalURL = ""
    
+   var simbolSelected = ""
+   
+    //Pre-setup IBOutlets
+    @IBOutlet weak var bitcoinPriceLabel: UILabel!
+    @IBOutlet weak var currencyPicker: UIPickerView!
    
    func numberOfComponents(in pickerView: UIPickerView) -> Int {
       return 1
+   }
+   
+   func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+      return currencyArray.count
    }
    
    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
@@ -25,19 +37,12 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
    }
    
    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-//      print(currencyArray[row])
-//      print(baseURL+currencyArray[row])
+      //      print(currencyArray[row])
+      //      print(baseURL+currencyArray[row])
       finalURL = baseURL + currencyArray[row]
+      getBitCoinData(url: finalURL)
+      simbolSelected = currencySimbol[row]
    }
-   
-    
-    let baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC"
-    let currencyArray = ["AUD", "BRL","CAD","CNY","EUR","GBP","HKD","IDR","ILS","INR","JPY","MXN","NOK","NZD","PLN","RON","RUB","SEK","SGD","USD","ZAR"]
-    var finalURL = ""
-
-    //Pre-setup IBOutlets
-    @IBOutlet weak var bitcoinPriceLabel: UILabel!
-    @IBOutlet weak var currencyPicker: UIPickerView!
    
    //splash screen
    let revealingSplashScreen = RevealingSplashView(iconImage: UIImage(named:"apple")!, iconInitialSize: CGSize(width:80, height:80), backgroundColor: UIColor.lightGray)
@@ -55,62 +60,39 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 
        
     }
+    //MARK: - Networking
+    /***************************************************************/
+   
+    func getBitCoinData(url: String) {
+      
+        Alamofire.request(url, method: .get)
+            .responseJSON { response in
+                if response.result.isSuccess {
 
-    
-    //TODO: Place your 3 UIPickerView delegate methods here
-    
-    
-    
+                    print("Sucess! Got BitCoin Data")
+                    let bitJSON : JSON = JSON(response.result.value!)
+                     //print(bitJSON)
 
-    
-    
-    
-//    
-//    //MARK: - Networking
-//    /***************************************************************/
-//    
-//    func getWeatherData(url: String, parameters: [String : String]) {
-//        
-//        Alamofire.request(url, method: .get, parameters: parameters)
-//            .responseJSON { response in
-//                if response.result.isSuccess {
-//
-//                    print("Sucess! Got the weather data")
-//                    let weatherJSON : JSON = JSON(response.result.value!)
-//
-//                    self.updateWeatherData(json: weatherJSON)
-//
-//                } else {
-//                    print("Error: \(String(describing: response.result.error))")
-//                    self.bitcoinPriceLabel.text = "Connection Issues"
-//                }
-//            }
-//
-//    }
-//
-//    
-//    
-//    
-//    
-//    //MARK: - JSON Parsing
-//    /***************************************************************/
-//    
-//    func updateWeatherData(json : JSON) {
-//        
-//        if let tempResult = json["main"]["temp"].double {
-//        
-//        weatherData.temperature = Int(round(tempResult!) - 273.15)
-//        weatherData.city = json["name"].stringValue
-//        weatherData.condition = json["weather"][0]["id"].intValue
-//        weatherData.weatherIconName =    weatherData.updateWeatherIcon(condition: weatherData.condition)
-//        }
-//        
-//        updateUIWithWeatherData()
-//    }
-//    
+                    self.updateBitCoinData(json: bitJSON)
 
+                } else {
+                    print("Error: \(String(describing: response.result.error))")
+                    self.bitcoinPriceLabel.text = "Connection Issues"
+                }
+            }
 
-
-
+    }
+  
+    //MARK: - JSON Parsing
+    /***************************************************************/
+   
+    func updateBitCoinData(json : JSON) {
+      
+        if let bitCoinPrice = json["ask"].double {
+         bitcoinPriceLabel.text = "\(simbolSelected) \(bitCoinPrice)"
+        }else{
+         bitcoinPriceLabel.text = "Price Unavailable"
+      }
+    }
 }
 
